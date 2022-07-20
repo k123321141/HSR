@@ -39,10 +39,9 @@ def get_noised_bg(w: int, h: int):
 
 def get_text_img(w: int, h: int, text: str, font: str):
     N = len(text)
-    fnt_size = random.randint(30, 70)
+    fnt_size = random.randint(h - 10, h - 3)
     fnt = ImageFont.truetype(font, fnt_size)
     img = Image.new("RGBA", (w, h), (255, 255, 255, 0))
-    offset_x = random.randint(0, w // 3)
     color = (0, 0, 0, random.randint(200, 255))
     for i, c in enumerate(text):
         char_img = Image.new("RGBA", (fnt_size, fnt_size), (255, 255, 255, 0))
@@ -50,19 +49,17 @@ def get_text_img(w: int, h: int, text: str, font: str):
 
         textdraw.text((0, 0), c, font=fnt, fill=color)
 
-        char_img = char_img.rotate(random.randint(-fnt_size, fnt_size), expand=True)
+        char_img = char_img.rotate(random.randint(-30, 30), expand=True)
         scaled_length = random.randint(int(fnt_size * 0.9), int(fnt_size * 1.1))
 
         char_img = char_img.resize((scaled_length, scaled_length))
 
-        anchor_x = int(i * ((w - fnt_size) / N)) + (fnt_size // 4)
-        x = offset_x + anchor_x + random.randint(-5, 5)
+        char_w = w // N
+        x = i * char_w + random.randint(0, max(0, char_w - fnt_size))
         # x = max(0, min(w - char_img.width, x))
         # x = max(0, min(w - char_img.width//2, x))
 
-        anchor_y = int(h / 2)
-        y = anchor_y + random.randint(-3, 3)
-        y = max(0, min(h - char_img.height, y))
+        y = random.randint(0, max(0, int((h - char_img.height) / 2)))
         # print(anchor_x, x, y, char_img.size)
         img.paste(char_img, (x, y), char_img)
 
