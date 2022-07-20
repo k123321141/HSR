@@ -3,6 +3,7 @@ import os
 import argparse
 from PIL import Image, ImageDraw, ImageFont
 from tqdm import tqdm
+from typing import List
 
 
 CHAR_LIST = [
@@ -36,10 +37,10 @@ def get_noised_bg(w: int, h: int):
     return img
 
 
-def get_text_img(w: int, h: int, text: str):
+def get_text_img(w: int, h: int, text: str, font: str):
     N = len(text)
     fnt_size = random.randint(30, 70)
-    fnt = ImageFont.truetype("/Users/payo/Downloads/bebas_neue/BebasNeue-Regular.ttf", fnt_size)
+    fnt = ImageFont.truetype(font, fnt_size)
     img = Image.new("RGBA", (w, h), (255, 255, 255, 0))
     offset_x = random.randint(0, w // 3)
     color = (0, 0, 0, random.randint(200, 255))
@@ -110,7 +111,7 @@ def generate_text(text_len: int):
     return ''.join(random.choices(CHAR_LIST, k=text_len))
 
 
-def generate_captcha():
+def generate_captcha(font_list: List[str]):
     # get an image
     w = random.randint(90, 180)
     h = random.randint(30, 60)
@@ -119,7 +120,7 @@ def generate_captcha():
 
     # get a font image
     text = generate_text(4)
-    text_img = get_text_img(w, h, text)
+    text_img = get_text_img(w, h, text, random.choice(font_list))
 
     arc_img = get_arc_img(w, h)
 
@@ -147,11 +148,13 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('number', type=int)
     parser.add_argument('output', type=str, help='Path of output directory.')
-    parser.add_argument('-f', '--font', type=str, default='./Microsoft-JhengHei.ttf')
+    parser.add_argument('-f', '--font_dir', type=str, default='./fonts/')
     args = parser.parse_args()
     print(args)
+
+    font_list = [os.path.join(args.font_dir, f) for f in os.listdir(args.font_dir) if f.endswith('ttf')]
     for _ in tqdm(range(args.number)):
-        img, text = generate_captcha()
+        img, text = generate_captcha(font_list)
         img = img.convert('RGB')
 
         filename = os.path.join(args.output, f'{text}.jpeg')
