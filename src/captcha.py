@@ -39,7 +39,7 @@ def get_noised_bg(w: int, h: int):
 
 def get_text_img(w: int, h: int, text: str, font: str):
     N = len(text)
-    fnt_size = random.randint(h - 10, h - 3)
+    fnt_size = random.randint(h - 10, h - 1)
     fnt = ImageFont.truetype(font, fnt_size)
     img = Image.new("RGBA", (w, h), (255, 255, 255, 0))
     color = (0, 0, 0, random.randint(200, 255))
@@ -75,7 +75,7 @@ def get_arc_img(w: int, h: int):
         (random.randint(int(1.7 * w), int(2.2 * w)), random.randint(int(1.5 * h), 4 * h)),
     ]
 
-    draw.ellipse(xy, outline=color, width=random.randint(5, 10))
+    draw.ellipse(xy, outline=color, width=random.randint(5, 15))
 
     return img
 
